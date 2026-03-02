@@ -19,7 +19,7 @@ The goal is to implement a fully functional server that handles multiple simulta
 ## 📋 Features
 
 <details>
-<summary><strong>Core Features</strong></summary>
+<summary><strong>ft_irc</strong></summary>
 
 <br>
 
