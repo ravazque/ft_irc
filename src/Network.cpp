@@ -4,13 +4,13 @@ void Server::openSocket()
 {
 	_listenFd = socket(AF_INET, SOCK_STREAM, 0);
 	if (_listenFd < 0)
-		throw std::runtime_error("socket() failed");
+		throw std::runtime_error(std::string("socket() failed: ") + strerror(errno));
 
 	int on = 1;
 	if (setsockopt(_listenFd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) < 0)
 	{
 		close(_listenFd);
-		throw std::runtime_error("setsockopt() failed");
+		throw std::runtime_error(std::string("setsockopt() failed: ") + strerror(errno));
 	}
 	fcntl(_listenFd, F_SETFL, O_NONBLOCK);
 
@@ -23,12 +23,12 @@ void Server::openSocket()
 	if (bind(_listenFd, (struct sockaddr*)&addr, sizeof(addr)) < 0)
 	{
 		close(_listenFd);
-		throw std::runtime_error("bind() failed");
+		throw std::runtime_error(std::string("bind() failed: ") + strerror(errno));
 	}
 	if (listen(_listenFd, MAX_FDS) < 0)
 	{
 		close(_listenFd);
-		throw std::runtime_error("listen() failed");
+		throw std::runtime_error(std::string("listen() failed: ") + strerror(errno));
 	}
 
 	struct pollfd entry;

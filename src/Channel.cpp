@@ -1,10 +1,8 @@
 #include "Irc.hpp"
 
-Channel::Channel()
-	: _modeI(false), _modeT(false), _cap(0) {}
+Channel::Channel() : _modeI(false), _modeT(false), _cap(0) {}
 
-Channel::Channel(const std::string& name)
-	: _label(name), _modeI(false), _modeT(false), _cap(0) {}
+Channel::Channel(const std::string& name) : _label(name), _modeI(false), _modeT(false), _cap(0) {}
 
 Channel::Channel(const Channel& src)
 	: _label(src._label), _subject(src._subject), _passkey(src._passkey),

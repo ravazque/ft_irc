@@ -16,7 +16,7 @@ The goal is to implement a fully functional server that handles multiple simulta
 - Handling operator privileges and channel modes
 - Writing robust, crash-resistant network code in C++98
 
-## 📋 Features
+## 📋 Function Overview
 
 <details>
 <summary><strong>ft_irc</strong></summary>
@@ -38,6 +38,114 @@ The goal is to implement a fully functional server that handles multiple simulta
 | **Kick Command** | Operators can remove users from channels |
 | **Partial Data Handling** | Aggregates TCP packets before processing commands |
 | **Graceful Shutdown** | SIGINT handler for clean server termination |
+
+<br>
+
+</details>
+
+<details>
+<summary><strong>Usage Example & Testing</strong></summary>
+
+<br>
+
+### Quick Start
+
+**1. Compile and launch the server:**
+```bash
+make && ./ircserv 6667 mypassword
+```
+
+**2. Connect with a client (open another terminal):**
+```bash
+# Using socat
+socat - TCP:127.0.0.1:6667
+```
+
+**3. Register and chat:**
+```
+PASS mypassword
+NICK alice
+USER alice 0 * :Alice Smith
+JOIN #test
+PRIVMSG #test :Hello from alice!
+```
+
+### Multi-client Test
+
+Open three terminals to simulate a full chat scenario:
+
+**Terminal 1 - Server:**
+```bash
+./ircserv 6667 secret
+```
+
+**Terminal 2 - Client A:**
+```bash
+socat - TCP:127.0.0.1:6667
+PASS secret
+NICK alice
+USER alice 0 * :Alice
+JOIN #general
+PRIVMSG #general :Hi everyone!
+```
+
+**Terminal 3 - Client B:**
+```bash
+socat - TCP:127.0.0.1:6667
+PASS secret
+NICK bob
+USER bob 0 * :Bob
+JOIN #general
+PRIVMSG #general :Hey alice!
+PRIVMSG alice :This is a private message
+```
+
+### Testing Channel Modes
+
+```bash
+# alice creates a channel (becomes operator automatically)
+JOIN #secret
+
+# Set invite-only + password + user limit
+MODE #secret +ikl key123 10
+
+# Set topic (operator only when +t is set)
+TOPIC #secret :Welcome to the secret channel
+
+# Invite bob
+INVITE bob #secret
+
+# bob joins with key
+JOIN #secret key123
+
+# Give bob operator status
+MODE #secret +o bob
+
+# Kick bob
+KICK #secret bob :reason here
+```
+
+### Testing with irssi
+
+```bash
+irssi -c 127.0.0.1 -p 6667 -w mypassword -n mynick
+```
+
+Once connected:
+```
+/join #test
+/msg #test Hello!
+/msg othernick Private hello
+/topic #test New topic
+/mode #test +i
+/invite othernick #test
+/kick #test othernick reason
+/quit bye
+```
+
+### Graceful Shutdown
+
+Press `Ctrl+C` on the server terminal to trigger a clean shutdown via SIGINT.
 
 <br>
 

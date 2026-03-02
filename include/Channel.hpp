@@ -1,7 +1,7 @@
 #ifndef CHANNEL_HPP
-#define CHANNEL_HPP
+# define CHANNEL_HPP
 
-#include "Irc.hpp"
+# include "Irc.hpp"
 
 class Channel
 {

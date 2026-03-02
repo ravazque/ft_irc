@@ -32,7 +32,7 @@ void Server::run()
 		{
 			if (!g_alive)
 				break;
-			throw std::runtime_error("poll() failed");
+			throw std::runtime_error(std::string("poll() failed: ") + strerror(errno));
 		}
 		std::vector<struct pollfd> snap = _pollSet;
 		for (size_t i = 0; i < snap.size(); i++)
