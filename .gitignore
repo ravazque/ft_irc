@@ -1,0 +1,19 @@
+# Compiled objects
+objects/
+*.o
+
+# Binary
+ircserv
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+
+# others
+docs/ft_irc.pdf
