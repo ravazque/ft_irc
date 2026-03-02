@@ -46,8 +46,6 @@ The goal is to implement a fully functional server that handles multiple simulta
 <details>
 <summary><strong>Usage Example & Testing</strong></summary>
 
-<br>
-
 ### Quick Start
 
 **1. Compile and launch the server:**
@@ -155,8 +153,6 @@ Press `Ctrl+C` on the server terminal to trigger a clean shutdown via SIGINT.
 
 <details>
 <summary><strong>📥 Compilation & Usage</strong></summary>
-
-<br>
 
 ## Build
 
