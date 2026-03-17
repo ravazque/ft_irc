@@ -36,6 +36,12 @@ void Server::execPrivmsg(Client* c, const std::vector<std::string>& args)
 		}
 		ch->relay(":" + c->fullId() + " PRIVMSG "
 			+ dest + " :" + text + "\r\n", c);
+		if (!text.empty() && text[0] == '!')
+			botReply(c, dest, text);
+	}
+	else if (dest == _bot->getNick())
+	{
+		botReply(c, c->getNick(), text);
 	}
 	else
 	{

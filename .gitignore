@@ -15,5 +15,6 @@ ircserv
 # macOS
 .DS_Store
 
-# others
+# Subject and internal information for the team
 docs/ft_irc.pdf
+docs/ft_irc.md

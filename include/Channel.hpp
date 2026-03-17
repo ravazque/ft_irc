@@ -25,13 +25,14 @@ class Channel
 		Channel& operator=(const Channel& src);
 		~Channel();
 
-		const std::string&			getLabel() const;
-		const std::string&			getSubject() const;
-		const std::string&			getPasskey() const;
-		const std::set<Client*>&	getUsers() const;
-		bool						flagInvite() const;
-		bool						flagTopic() const;
-		int							getCap() const;
+		const std::string&				getLabel() const;
+		const std::string&				getSubject() const;
+		const std::string&				getPasskey() const;
+		const std::set<Client*>&		getUsers() const;
+		bool							flagInvite() const;
+		bool							flagTopic() const;
+		int								getCap() const;
+		const std::set<std::string>&	getWhitelist() const;
 
 		void	changeSubject(const std::string& val);
 		void	changePasskey(const std::string& val);

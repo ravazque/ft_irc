@@ -37,7 +37,7 @@ void Server::execNick(Client* c, const std::vector<std::string>& args)
 		return;
 	}
 	Client* clash = locateUser(wanted);
-	if (clash && clash != c)
+	if ((clash && clash != c) || wanted == _bot->getNick())
 	{
 		sendNumeric(c, ERR::NICKNAMEINUSE, who,
 			wanted + " :Nickname is already in use");

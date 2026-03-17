@@ -13,6 +13,7 @@ class Server
 		std::vector<struct pollfd>		_pollSet;
 		std::map<int, Client*>			_sessions;
 		std::map<std::string, Channel*>	_rooms;
+		Bot*							_bot;
 
 		Server();
 		Server(const Server&);
@@ -62,6 +63,8 @@ class Server
 		void		listMembers(Client* c, Channel* ch);
 		void		notifyChannels(Client* c, const std::string& msg);
 		std::string	hostname() const;
+
+		void		botReply(Client* c, const std::string& dest, const std::string& text);
 
 		static std::vector<std::string> splitList(const std::string& s, char sep);
 

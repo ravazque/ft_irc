@@ -13,6 +13,7 @@
 # include <cerrno>
 # include <csignal>
 # include <cctype>
+# include <ctime>
 
 # include <sys/socket.h>
 # include <sys/types.h>
@@ -32,10 +33,12 @@ extern bool g_alive;
 class Client;
 class Channel;
 class Server;
+class Bot;
 
 # include "Replies.hpp"
 # include "Client.hpp"
 # include "Channel.hpp"
+# include "Bot.hpp"
 # include "Server.hpp"
 
 #endif

@@ -29,13 +29,14 @@ Channel& Channel::operator=(const Channel& src)
 
 Channel::~Channel() {}
 
-const std::string&			Channel::getLabel() const { return _label; }
-const std::string&			Channel::getSubject() const { return _subject; }
-const std::string&			Channel::getPasskey() const { return _passkey; }
-const std::set<Client*>&	Channel::getUsers() const { return _users; }
-bool						Channel::flagInvite() const { return _modeI; }
-bool						Channel::flagTopic() const { return _modeT; }
-int							Channel::getCap() const { return _cap; }
+const std::string&				Channel::getLabel() const { return _label; }
+const std::string&				Channel::getSubject() const { return _subject; }
+const std::string&				Channel::getPasskey() const { return _passkey; }
+const std::set<Client*>&		Channel::getUsers() const { return _users; }
+bool							Channel::flagInvite() const { return _modeI; }
+bool							Channel::flagTopic() const { return _modeT; }
+int								Channel::getCap() const { return _cap; }
+const std::set<std::string>&	Channel::getWhitelist() const { return _whitelist; }
 
 void	Channel::changeSubject(const std::string& val) { _subject = val; }
 void	Channel::changePasskey(const std::string& val) { _passkey = val; }

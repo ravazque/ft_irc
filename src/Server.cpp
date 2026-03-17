@@ -1,7 +1,10 @@
 #include "Irc.hpp"
 
 Server::Server(int port, const std::string& pass)
-	: _listenPort(port), _connPass(pass), _listenFd(-1) {}
+	: _listenPort(port), _connPass(pass), _listenFd(-1), _bot(new Bot())
+{
+	std::srand(std::time(NULL));
+}
 
 Server::~Server()
 {
@@ -16,6 +19,7 @@ Server::~Server()
 		delete it->second;
 	if (_listenFd != -1)
 		close(_listenFd);
+	delete _bot;
 }
 
 void Server::boot()
@@ -116,6 +120,9 @@ void Server::listMembers(Client* c, Channel* ch)
 			names += "@";
 		names += (*it)->getNick();
 	}
+	if (!names.empty())
+		names += " ";
+	names += _bot->getNick();
 	sendNumeric(c, RPL::NAMREPLY, c->getNick(),
 		"= " + ch->getLabel() + " :" + names);
 	sendNumeric(c, RPL::ENDOFNAMES, c->getNick(),
@@ -144,6 +151,131 @@ void Server::notifyChannels(Client* c, const std::string& msg)
 }
 
 std::string Server::hostname() const { return "ircserv"; }
+
+void Server::botReply(Client* c, const std::string& dest,
+	const std::string& text)
+{
+	std::string reply;
+
+	// ── Parse command name and argument ─────────────────────────────────
+	std::string cmd;
+	std::string arg;
+	if (!text.empty() && text[0] == '!')
+	{
+		size_t sp = text.find(' ');
+		if (sp == std::string::npos)
+			cmd = text.substr(1);
+		else
+		{
+			cmd = text.substr(1, sp - 1);
+			arg = text.substr(sp + 1);
+		}
+		for (size_t i = 0; i < cmd.size(); i++)
+			cmd[i] = std::tolower(cmd[i]);
+	}
+
+	// ── Data-rich commands (need server data) ───────────────────────────
+	if (cmd == "info")
+	{
+		std::vector<std::string> nickList;
+		for (std::map<int, Client*>::iterator it = _sessions.begin();
+			it != _sessions.end(); ++it)
+			nickList.push_back(it->second->getNick());
+
+		std::vector<std::string> chanList;
+		for (std::map<std::string, Channel*>::iterator it = _rooms.begin();
+			it != _rooms.end(); ++it)
+			chanList.push_back(it->first);
+
+		reply = _bot->fmtInfo(_sessions.size(), _rooms.size(),
+			nickList, chanList);
+	}
+	else if (cmd == "who")
+	{
+		if (arg.empty())
+		{
+			reply = "Usage: !who <#channel>[,#channel2,...]. Even that is apparently too complex.";
+		}
+		else
+		{
+			std::vector<std::string> targets = splitList(arg, ',');
+			for (size_t t = 0; t < targets.size(); t++)
+			{
+				std::string chanName = targets[t];
+				Channel* ch = locateRoom(chanName);
+				if (!ch)
+				{
+					reply += chanName + ": No such channel. Another disappointment.\n";
+					continue;
+				}
+
+				// Build user list with role prefixes
+				std::vector<std::string> users;
+				const std::set<Client*>& grp = ch->getUsers();
+				for (std::set<Client*>::const_iterator it = grp.begin();
+					it != grp.end(); ++it)
+				{
+					std::string entry;
+					if (ch->isModerator(*it))
+						entry += "@";
+					entry += (*it)->getNick();
+					users.push_back(entry);
+				}
+				users.push_back("*" + _bot->getNick());
+
+				// Build mode string
+				std::string modes;
+				if (ch->flagInvite())
+					modes += "i";
+				if (ch->flagTopic())
+					modes += "t";
+				if (!ch->getPasskey().empty())
+					modes += "k";
+				if (ch->getCap() > 0)
+					modes += "l";
+				if (!modes.empty())
+					modes = "+" + modes;
+
+				// Whitelist
+				std::vector<std::string> wl;
+				const std::set<std::string>& wset = ch->getWhitelist();
+				for (std::set<std::string>::const_iterator it = wset.begin();
+					it != wset.end(); ++it)
+					wl.push_back(*it);
+
+				reply += _bot->fmtWho(chanName, users, modes,
+					wl, ch->headcount(), ch->getCap());
+			}
+		}
+	}
+	else
+	{
+		// ── Simple commands (no server data needed) ─────────────────────
+		reply = _bot->handleCommand(text);
+	}
+
+	if (reply.empty())
+		return;
+
+	std::string prefix = ":" + _bot->fullId() + " PRIVMSG " + dest + " :";
+	std::istringstream ss(reply);
+	std::string line;
+	while (std::getline(ss, line))
+	{
+		if (!line.empty() && line[line.size() - 1] == '\r')
+			line.erase(line.size() - 1);
+		if (line.empty())
+			continue;
+		if (dest[0] == '#' || dest[0] == '&')
+		{
+			Channel* ch = locateRoom(dest);
+			if (ch)
+				ch->relay(prefix + line + "\r\n");
+		}
+		else
+			transmit(c->socketFd(), prefix + line + "\r\n");
+	}
+}
 
 std::vector<std::string> Server::splitList(const std::string& s, char sep)
 {
