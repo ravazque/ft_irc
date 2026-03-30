@@ -8,7 +8,7 @@ SRC_DIR = src
 OBJ_DIR = objects
 INC_DIR = include
 
-SRCS = main.cpp Server.cpp Network.cpp Client.cpp Channel.cpp \
+SRCS = Irc.cpp Server.cpp Network.cpp Client.cpp Channel.cpp \
        Parse.cpp CmdAuth.cpp CmdChannel.cpp CmdMessage.cpp Bot.cpp
 OBJS = $(addprefix $(OBJ_DIR)/, $(SRCS:.cpp=.o))
 

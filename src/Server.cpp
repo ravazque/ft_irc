@@ -1,3 +1,4 @@
+
 #include "Irc.hpp"
 
 Server::Server(int port, const std::string& pass)
@@ -152,12 +153,21 @@ void Server::notifyChannels(Client* c, const std::string& msg)
 
 std::string Server::hostname() const { return "ircserv"; }
 
+void Server::ensureOp(Channel* ch)
+{
+	if (ch->hasOps() || ch->vacant())
+		return;
+	Client* next = ch->firstUser();
+	ch->promote(next);
+	ch->relay(":" + hostname() + " MODE " + ch->getLabel()
+		+ " +o " + next->getNick() + "\r\n");
+}
+
 void Server::botReply(Client* c, const std::string& dest,
 	const std::string& text)
 {
 	std::string reply;
 
-	// ── Parse command name and argument ─────────────────────────────────
 	std::string cmd;
 	std::string arg;
 	if (!text.empty() && text[0] == '!')
@@ -174,7 +184,6 @@ void Server::botReply(Client* c, const std::string& dest,
 			cmd[i] = std::tolower(cmd[i]);
 	}
 
-	// ── Data-rich commands (need server data) ───────────────────────────
 	if (cmd == "info")
 	{
 		std::vector<std::string> nickList;
@@ -209,7 +218,6 @@ void Server::botReply(Client* c, const std::string& dest,
 					continue;
 				}
 
-				// Build user list with role prefixes
 				std::vector<std::string> users;
 				const std::set<Client*>& grp = ch->getUsers();
 				for (std::set<Client*>::const_iterator it = grp.begin();
@@ -223,7 +231,6 @@ void Server::botReply(Client* c, const std::string& dest,
 				}
 				users.push_back("*" + _bot->getNick());
 
-				// Build mode string
 				std::string modes;
 				if (ch->flagInvite())
 					modes += "i";
@@ -236,7 +243,6 @@ void Server::botReply(Client* c, const std::string& dest,
 				if (!modes.empty())
 					modes = "+" + modes;
 
-				// Whitelist
 				std::vector<std::string> wl;
 				const std::set<std::string>& wset = ch->getWhitelist();
 				for (std::set<std::string>::const_iterator it = wset.begin();
@@ -249,10 +255,7 @@ void Server::botReply(Client* c, const std::string& dest,
 		}
 	}
 	else
-	{
-		// ── Simple commands (no server data needed) ─────────────────────
 		reply = _bot->handleCommand(text);
-	}
 
 	if (reply.empty())
 		return;

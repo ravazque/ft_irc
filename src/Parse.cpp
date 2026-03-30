@@ -1,9 +1,11 @@
+
 #include "Irc.hpp"
 
 void Server::routeMessage(Client* c, const std::string& raw)
 {
 	std::string line = raw;
 
+	// Could be more efficient
 	while (!line.empty() && line[0] == ' ')
 		line.erase(0, 1);
 	if (line.empty())

@@ -1,3 +1,4 @@
+
 #include "Irc.hpp"
 
 Client::Client() : _sockFd(-1), _authorized(false), _welcomed(false) {}

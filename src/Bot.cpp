@@ -1,3 +1,4 @@
+
 #include "Irc.hpp"
 
 // ── Construction ────────────────────────────────────────────────────────────
@@ -23,8 +24,6 @@ const char* Bot::pickRandom(const char* const arr[], size_t len)
 }
 
 // ── Command router ──────────────────────────────────────────────────────────
-//    !info and !who are handled by Server::botReply (they need server data).
-//    This router handles all other simple commands.
 
 std::string Bot::handleCommand(const std::string& text) const
 {
@@ -272,7 +271,6 @@ std::string Bot::fmtWho(const std::string& chanName,
 	std::ostringstream oss;
 	oss << "\x03" "14,01" "--- " << chanName << " ---" "\x03" "\n";
 
-	// Users
 	oss << "\x02" "Users (" << curUsers << "):\x02 ";
 	for (size_t i = 0; i < users.size(); i++)
 	{
@@ -285,13 +283,11 @@ std::string Bot::fmtWho(const std::string& chanName,
 	// Modes
 	oss << "\x02" "Modes:\x02 " << (modes.empty() ? "(none)" : modes) << "\n";
 
-	// Capacity (if +l is set)
 	if (cap > 0)
 	{
 		oss << "\x02" "Capacity:\x02 " << curUsers << "/" << cap << "\n";
 	}
 
-	// Invite whitelist (if +i is set)
 	if (modes.find('i') != std::string::npos)
 	{
 		oss << "\x02" "Invite whitelist:\x02 ";

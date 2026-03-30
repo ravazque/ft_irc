@@ -1,3 +1,4 @@
+
 #include "Irc.hpp"
 
 Channel::Channel() : _modeI(false), _modeT(false), _cap(0) {}
@@ -66,6 +67,13 @@ void	Channel::demote(Client* c) { _moderators.erase(c); }
 bool Channel::isModerator(Client* c) const
 {
 	return _moderators.find(c) != _moderators.end();
+}
+
+bool Channel::hasOps() const { return !_moderators.empty(); }
+
+Client* Channel::firstUser() const
+{
+	return _users.empty() ? NULL : *_users.begin();
 }
 
 void	Channel::allow(const std::string& nick) { _whitelist.insert(nick); }

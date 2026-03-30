@@ -1,3 +1,4 @@
+
 #include "Irc.hpp"
 
 void Server::openSocket()
@@ -116,7 +117,10 @@ void Server::dropClient(int fd)
 			_rooms.erase(it++);
 		}
 		else
+		{
+			ensureOp(it->second);
 			++it;
+		}
 	}
 
 	for (std::vector<struct pollfd>::iterator it = _pollSet.begin();

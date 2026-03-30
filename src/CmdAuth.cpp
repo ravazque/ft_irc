@@ -1,3 +1,4 @@
+
 #include "Irc.hpp"
 
 void Server::execPass(Client* c, const std::vector<std::string>& args)

@@ -1,3 +1,4 @@
+
 #include "Irc.hpp"
 
 bool g_alive = true;
