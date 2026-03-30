@@ -282,8 +282,7 @@ QUIT :bye
 ft_irc/
 │
 ├── docs/
-│   ├── README.md                # Project documentation
-│   └── ft_irc.md                # Study guide covering the full codebase
+│   └── README.md                # Project documentation
 ├── include/
 │   ├── Irc.hpp                  # Main header: standard includes, defines, forward declarations
 │   ├── Replies.hpp              # IRC numeric reply constants (RPL:: and ERR:: namespaces)
@@ -292,7 +291,7 @@ ft_irc/
 │   ├── Channel.hpp              # Channel class: membership, modes, relay
 │   └── Bot.hpp                  # Bot class: Marvin pseudo-client definition
 ├── src/
-│   ├── main.cpp                 # Entry point, argument validation, signal handlers
+│   ├── Irc.cpp                  # Entry point, argument validation, signal handlers
 │   ├── Server.cpp               # Constructor, destructor, boot(), run(), helper methods
 │   ├── Network.cpp              # Socket setup, accept, receive with buffering, disconnect
 │   ├── Client.cpp               # Client state management, OCF, fullId() prefix
